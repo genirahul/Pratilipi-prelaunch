@@ -1,0 +1,74 @@
+#  For Google App Engine deployment, copy this file to app.yaml
+#  and edit as required
+#  See http://code.google.com/appengine/docs/python/config/appconfig.html
+#  and http://web2py.com/book/default/chapter/11?search=app.yaml
+
+application: genial-charter-608
+version: 2
+api_version: 1
+
+# use this line for Python 2.5
+#
+#runtime: python
+
+# use these lines for Python 2.7
+# upload app with: appcfg.py update web2py (where 'web2py' is web2py's root directory)
+#
+runtime: python27
+threadsafe: true    # true for WSGI & concurrent requests (Python 2.7 only)
+
+default_expiration: "24h"   # for static files
+
+handlers:
+
+# Warning! Static mapping - below - isn't compatible with 
+# the parametric router's language logic. 
+# You cannot use them together.
+
+- url: /(.+?)/[^_]*\/?static/_\d.\d.\d\/?(.+)
+  static_files: applications/\1/static/\2
+  upload: applications/(.+?)/static/(.+)
+  secure: optional
+  expiration: "365d"
+
+- url: /(.+?)/[^_]*\/?static/?(.+)
+  static_files: applications/\1/static/\2
+  upload: applications/(.+?)/static/(.+)
+  secure: optional
+  
+- url: /images/(.*\.(gif|png|jpg))
+  static_files: images/\1
+  upload: images/(.*\.(gif|png|jpg))
+  
+- url: /css
+  static_dir: static/css
+
+- url: /favicon.ico
+  static_files: applications/welcome/static/favicon.ico
+  upload: applications/welcome/welcome/favicon.ico
+
+- url: /robots.txt
+  static_files: applications/welcome/static/robots.txt
+  upload: applications/welcome/static/robots.txt
+
+- url: .*
+#  script: gaehandler.py         # CGI
+  script: gaehandler.wsgiapp    # WSGI (Python 2.7 only)
+#  script: wsgihandler.py
+  secure: optional
+
+admin_console:
+  pages:
+  - name: Appstats
+    url: /_ah/stats
+
+libraries:
+- name:    PIL
+  version: "1.1.7"
+ 
+ 
+builtins:
+- remote_api: on
+- appstats: on
+- admin_redirect: on
+- deferred: on
